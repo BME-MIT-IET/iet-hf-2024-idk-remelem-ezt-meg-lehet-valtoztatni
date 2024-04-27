@@ -1,0 +1,4 @@
+.vs
+**/bin
+**/obj
+WebShop.Api/WebShop.Api.csproj.user
