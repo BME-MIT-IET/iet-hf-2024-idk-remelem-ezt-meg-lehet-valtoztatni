@@ -37,7 +37,7 @@ public class ProductService : IProductService
             ?? throw new EntityNotFoundException("Nem található a termék");
     }
 
-    public async Task<IEnumerable<ProductOut>> GetProductsAsync(int? categoryId, int? minPrice, int? maxPrice)
+    public async Task<IEnumerable<ProductOut>> GetProductsAsync(int? categoryId = null, int? minPrice = null, int? maxPrice = null)
     {
         IQueryable<Dal.Entities.Product> products = _context.Products;
 

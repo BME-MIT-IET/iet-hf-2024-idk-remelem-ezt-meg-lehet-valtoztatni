@@ -14,25 +14,37 @@ namespace WebShop.Tests;
 
 public class ProductServiceUnitTests
 {
-    private Faker<Product> _productFaker;
-    private Mock<AppDbContext> _mockDbContext;
-    private IMapper _mapper;
+    private List<Product> products;
+    private Faker<Product> productFaker;
+    private Mock<AppDbContext> mockDbContext;
+    private Mock<DbSet<Product>> mockDbSet;
+    private IMapper mapper;
 
     public ProductServiceUnitTests()
     {
-        _productFaker = new Faker<Product>()
-            .CustomInstantiator(f => new Product("asd", 10))
+        products = new List<Product>();
+        mockDbSet = products.AsQueryable().BuildMockDbSet();
+        mockDbContext = new Mock<AppDbContext>(new DbContextOptions<AppDbContext>());
+
+        productFaker = new Faker<Product>()
+            .CustomInstantiator(f =>
+                new Product(
+                    f.Commerce.Product(),
+                    10
+                )
+            )
             .RuleFor(p => p.Name, f => f.Commerce.Product())
             .RuleFor(p => p.Description, f => f.Commerce.ProductDescription())
-            .RuleFor(p => p.Price, f => f.Random.Int(200, 2000));
+            .RuleFor(p => p.Price, f => f.Random.Int(200, 2000)
+        );
 
         var mapperConfiguration = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile(new WebApiProfile());
-        });
-        _mapper = new Mapper(mapperConfiguration);
-        _mockDbContext = new Mock<AppDbContext>(new DbContextOptions<AppDbContext>());
+            {
+                cfg.AddProfile(new WebApiProfile());
+            }
+        );
 
+        mapper = new Mapper(mapperConfiguration);
     }
 
     [Theory]
@@ -43,17 +55,15 @@ public class ProductServiceUnitTests
     public async void GetProductCount(int count)
     {
         // Arrange
-        var data = _productFaker.Generate(count);
-        var mock = data.AsQueryable().BuildMockDbSet();
-        _mockDbContext.Setup(c => c.Products).Returns(mock.Object);
-        var service = new ProductService(_mockDbContext.Object, _mapper);
+        GenerateAndAddProducts(count);
+        ConfigureDbContextToReturnProducts();
+        var service = new ProductService(mockDbContext.Object, mapper);
 
         // Act
         var resultCount = await service.GetProductCountAsync();
 
         // Assert
-        _mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
-        _mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never());
+        VerifySaveChangesIsNotCalled();
         resultCount.Should().Be(count);
     }
 
@@ -61,108 +71,172 @@ public class ProductServiceUnitTests
     public async void GetProductAsync()
     {
         // Arrange
-        var data = new List<Product> { new Product("asd", 10) { Id = 1 } };
-        var mock = data.AsQueryable().BuildMockDbSet();
-        _mockDbContext.Setup(c => c.Products).Returns(mock.Object);
-        var service = new ProductService(_mockDbContext.Object, _mapper);
+        var idToAdd = 1;
+        AddProductsWithId(idToAdd);
+        ConfigureDbContextToReturnProducts();
+        var service = new ProductService(mockDbContext.Object, mapper);
 
         // Act
-        var productOut = await service.GetProductAsync(1);
+        var outProduct = await service.GetProductAsync(1);
 
         // Assert
-        _mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
-        _mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never());
-        productOut.Should().BeEquivalentTo(
-            data[0],
-            opt => opt.ExcludingMissingMembers()
-        );
+        VerifySaveChangesIsNotCalled();
+        VerifyCorrectProductReturned(outProduct);
     }
 
     [Fact]
     public async void GetProductsAsync()
     {
         // Arrange
-        var data = new List<Product> {
-            new Product("asd", 10) { Id = 1 },
-            new Product("asd", 10) { Id = 2 },
-            new Product("asd", 10) { Id = 3 }
-        };
-        var mock = data.AsQueryable().BuildMockDbSet();
-        _mockDbContext.Setup(ctx => ctx.Products).Returns(mock.Object);
-        var service = new ProductService(_mockDbContext.Object, _mapper);
+        ConfigureDbContextToReturnProducts();
+        var service = new ProductService(mockDbContext.Object, mapper);
 
         // Act
-        var productsOut = await service.GetProductsAsync(null, null, null);
+        var outProducts = await service.GetProductsAsync();
 
         // Assert
-        _mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
-        _mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never());
-        productsOut.Should().BeEquivalentTo(
-            data,
-            opt => opt.ExcludingMissingMembers()
-        );
+        VerifySaveChangesIsNotCalled();
+        VerifyAllProductReturned(outProducts);
     }
 
     [Fact]
     public async void InsertProduct()
     {
         // Arrange
-        var data = new List<Product>();
         var newProduct = new ProductIn() { Name = "asd", CategoryId = 1, Description = "asd", Price = 1000};
-        var mock = data.AsQueryable().BuildMockDbSet();
-        mock.Setup(set => set.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
-            .Callback((Product entity, CancellationToken _) => data.Add(entity));
-        _mockDbContext.Setup(ctx => ctx.Products).Returns(mock.Object);
-        var service = new ProductService(_mockDbContext.Object, _mapper);
+        ConfigureDbContextToInsertProduct();
+        ConfigureDbContextToReturnProducts();
+        var service = new ProductService(mockDbContext.Object, mapper);
 
         // Act
-        var insertedProduct = await service.InsertProductAsync(newProduct);
+        var outProduct = await service.InsertProductAsync(newProduct);
 
         // Assert
-        _mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
-        _mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
-        insertedProduct.Id.Should().NotBe(null);
-        insertedProduct.Should().BeEquivalentTo(newProduct);
+        VerifyInsertAsyncIsCalledOnce();
+        VerifySaveChangesAsyncCalledOnce();
+        outProduct.Id.Should().NotBe(null);
+        outProduct.Should().BeEquivalentTo(newProduct);
+    }
+
+    private void ConfigureDbContextToInsertProduct()
+    {
+        mockDbSet
+            .Setup(set => set.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
+            .Callback((Product entity, CancellationToken _) => products.Add(entity));
     }
 
     [Fact]
     public async void DeleteExistingProduct()
     {
         // Arrange
-        var data = new List<Product>{ new Product("asd", 10) { Id = 1 } };
-        var mock = data.AsQueryable().BuildMockDbSet();
-        mock.Setup(set => set.Remove(It.IsAny<Product>()))
-            .Callback((Product entity) => data.RemoveAll(p => p.Id == entity.Id));
-        _mockDbContext.Setup(c => c.Products).Returns(mock.Object);
-        var service = new ProductService(_mockDbContext.Object, _mapper);
+        var idToDelete = 1;
+        AddProductsWithId(idToDelete);
+        ConfigureDbContextToReturnProducts();
+        ConfigureDbSetToBeAbleToRemoveProduct();
+        var service = new ProductService(mockDbContext.Object, mapper);
 
         // Act
-        await service.DeleteProductAsync(1);
+        await service.DeleteProductAsync(idToDelete);
 
         // Assert
-        _mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
-        _mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
-        data.Count.Should().Be(0);
+        VerifySaveChangesAsyncCalledOnce();
+        products.Count.Should().Be(0);
     }
 
     [Fact]
     public async void DeleteNonExistingProduct()
     {
         // Arrange
-        var data = new List<Product> { };
-        var mock = data.AsQueryable().BuildMockDbSet();
-        mock.Setup(set => set.Remove(It.IsAny<Product>()));
-        _mockDbContext.Setup(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>())).Throws(new DbUpdateConcurrencyException());
-        _mockDbContext.Setup(ctx => ctx.Products).Returns(mock.Object);
-        var service = new ProductService(_mockDbContext.Object, _mapper);
+        ConfigureDbSetToBeAbleToRemoveProduct();
+        ConfigureDbContextToThrowErrorOnSaveChanges();
+        ConfigureDbContextToReturnProducts();
+        var service = new ProductService(mockDbContext.Object, mapper);
 
         // Act/Assert
-        Func<Task> asd = async () => await service.DeleteProductAsync(1);
-        await asd.Should().ThrowAsync<EntityNotFoundException>();
+        Func<Task> call = async () => await service.DeleteProductAsync(1);
 
         // Assert
-        mock.Verify(set => set.Remove(It.IsAny<Product>()), Times.Once());
-        _mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
-        _mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+        await call.Should().ThrowAsync<EntityNotFoundException>();
+        VerifyRemoveIsCalledOnce();
+        VerifySaveChangesAsyncCalledOnce();
+    }
+
+    private void ConfigureDbContextToReturnProducts()
+    {
+        mockDbContext
+            .Setup(ctx => ctx.Products)
+            .Returns(mockDbSet.Object);
+    }
+
+    private void ConfigureDbContextToThrowErrorOnSaveChanges()
+    {
+        mockDbContext
+            .Setup(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Throws(new DbUpdateConcurrencyException());
+    }
+
+    private void ConfigureDbSetToBeAbleToRemoveProduct()
+    {
+        mockDbSet
+            .Setup(set => set.Remove(It.IsAny<Product>()))
+            .Callback((Product entity) => products.RemoveAll(p => p.Id == entity.Id));
+    }
+    private void GenerateAndAddProducts(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            AddProductsWithId(i + 1);
+        }
+    }
+
+    private void AddProductsWithId(params int[] ids)
+    {
+        products.AddRange(
+            ids.Select(id =>
+            {
+                var product = productFaker.Generate();
+                product.Id = id;
+                return product;
+            })
+        );
+    }
+
+    private void VerifyInsertAsyncIsCalledOnce()
+    {
+        mockDbSet.Verify(set => set.Add(It.IsAny<Product>()), Times.Never());
+        mockDbSet.Verify(set => set.AddAsync(It.IsAny<Product>() ,It.IsAny<CancellationToken>()), Times.Once());
+    }
+
+    private void VerifyRemoveIsCalledOnce()
+    {
+        mockDbSet.Verify(set => set.Remove(It.IsAny<Product>()), Times.Once());
+    }
+
+    private void VerifySaveChangesIsNotCalled()
+    {
+        mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
+        mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never());
+    }
+
+    private void VerifySaveChangesAsyncCalledOnce()
+    {
+        mockDbContext.Verify(ctx => ctx.SaveChanges(), Times.Never());
+        mockDbContext.Verify(ctx => ctx.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+    }
+
+    private void VerifyCorrectProductReturned(ProductOut outProduct)
+    {
+        outProduct.Should().BeEquivalentTo(
+            products[0],
+            opt => opt.ExcludingMissingMembers()
+        );
+    }
+
+    private void VerifyAllProductReturned(IEnumerable<ProductOut> outProducts)
+    {
+        outProducts.Should().BeEquivalentTo(
+            products,
+            opt => opt.ExcludingMissingMembers()
+        );
     }
 }
