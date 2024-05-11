@@ -33,7 +33,7 @@ Windows, Safari:
 Linux, Firefox:
 ![Linux, Firefox](resources/compat/Lin-Firefox.png)
 
-Mac, Chrome:
+Mac, Edge:
 ![Mac, Edge](resources/compat/Mac-edge.png)
 
 Mac, Safari:
