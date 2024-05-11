@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Transactions;
 using WebShop.Bll.Dtos;
 using WebShop.Dal.Entities;
+using WebShop.Tests.IntegrationTests;
 
 namespace WebShop.Tests;
 

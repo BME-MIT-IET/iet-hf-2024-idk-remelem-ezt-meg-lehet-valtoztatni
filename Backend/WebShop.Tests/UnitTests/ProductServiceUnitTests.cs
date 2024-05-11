@@ -35,8 +35,7 @@ public class ProductServiceUnitTests
             )
             .RuleFor(p => p.Name, f => f.Commerce.Product())
             .RuleFor(p => p.Description, f => f.Commerce.ProductDescription())
-            .RuleFor(p => p.Price, f => f.Random.Int(200, 2000)
-        );
+            .RuleFor(p => p.Price, f => f.Random.Int(200, 2000));
 
         var mapperConfiguration = new MapperConfiguration(cfg =>
             {
