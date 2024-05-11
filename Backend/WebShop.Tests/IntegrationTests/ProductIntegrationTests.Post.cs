@@ -2,12 +2,10 @@
 using System.Net.Http.Json;
 using System.Transactions;
 using WebShop.Bll.Dtos;
-using WebShop.Dal.Entities;
-using WebShop.Tests.IntegrationTests;
 
-namespace WebShop.Tests;
+namespace WebShop.Tests.IntegrationTests;
 
-public partial class ProductIntegrationTests
+public partial class ProductTests
 {
     public class Post : ProductControllerTests
     {

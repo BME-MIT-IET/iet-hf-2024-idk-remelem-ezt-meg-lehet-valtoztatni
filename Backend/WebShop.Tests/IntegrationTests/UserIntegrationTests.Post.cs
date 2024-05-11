@@ -1,17 +1,13 @@
-﻿using Bogus.DataSets;
-using FluentAssertions;
-using Hellang.Middleware.ProblemDetails;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http.Json;
 using System.Transactions;
 using WebShop.Bll.Dtos;
-using WebShop.Tests.IntegrationTests;
 
-namespace WebShop.Tests;
+namespace WebShop.Tests.IntegrationTests;
 
-public partial class UserIntegrationTests
+public partial class UserTests
 {
     public class Post : UserControllerTests
     {

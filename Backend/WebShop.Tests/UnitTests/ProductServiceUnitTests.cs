@@ -10,9 +10,9 @@ using WebShop.Bll.Services;
 using WebShop.Dal;
 using WebShop.Dal.Entities;
 
-namespace WebShop.Tests;
+namespace WebShop.Tests.UnitTests;
 
-public class ProductServiceUnitTests
+public class ProductServiceTests
 {
     private List<Product> products;
     private Faker<Product> productFaker;
@@ -20,7 +20,7 @@ public class ProductServiceUnitTests
     private Mock<DbSet<Product>> mockDbSet;
     private IMapper mapper;
 
-    public ProductServiceUnitTests()
+    public ProductServiceTests()
     {
         products = new List<Product>();
         mockDbSet = products.AsQueryable().BuildMockDbSet();
@@ -102,7 +102,7 @@ public class ProductServiceUnitTests
     public async void InsertProduct()
     {
         // Arrange
-        var newProduct = new ProductIn() { Name = "asd", CategoryId = 1, Description = "asd", Price = 1000};
+        var newProduct = new ProductIn() { Name = "asd", CategoryId = 1, Description = "asd", Price = 1000 };
         ConfigureDbContextToInsertProduct();
         ConfigureDbContextToReturnProducts();
         var service = new ProductService(mockDbContext.Object, mapper);
@@ -203,7 +203,7 @@ public class ProductServiceUnitTests
     private void VerifyInsertAsyncIsCalledOnce()
     {
         mockDbSet.Verify(set => set.Add(It.IsAny<Product>()), Times.Never());
-        mockDbSet.Verify(set => set.AddAsync(It.IsAny<Product>() ,It.IsAny<CancellationToken>()), Times.Once());
+        mockDbSet.Verify(set => set.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once());
     }
 
     private void VerifyRemoveIsCalledOnce()
