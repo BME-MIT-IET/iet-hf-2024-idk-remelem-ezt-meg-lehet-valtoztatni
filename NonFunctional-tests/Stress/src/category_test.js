@@ -5,11 +5,9 @@ import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporte
 export let options = {
     insecureSkipTLSVerify: true,
     stages: [
-        { duration: '30s', target: 5 },
-        { duration: '30s', target: 10 }, // this seems to be the most it can handle
         { duration: '30s', target: 10 },
-        { duration: '30s', target: 10 },
-        { duration: '30s', target: 5 }
+        { duration: '30s', target: 20 }, // this seems to be the most it can handle
+        { duration: '30s', target: 25 },
     ]
 }
 
@@ -40,8 +38,9 @@ export default function () {
     let adminCookie = loginAsAdmin();
 
     // Create a new category
+    let myCategoryName = "k6-" + Date.now();
     let payload = JSON.stringify({
-        name: "k6-" + Date.now()
+        name: myCategoryName
     });
     let params = {
         headers: {
@@ -62,14 +61,20 @@ export default function () {
     if (res.status !== 200) {
         fail(`Category listing failed with status code: ${res.status}`);
     }
-
-    let randomCategoryId = res.json()[Math.floor(Math.random() * res.json().length)].id;
+    let myCategoryId = null;
+    let categories = res.json();
+    for (let i = 0; i < categories.length; i++) {
+        if (categories[i].name === myCategoryName) {
+            myCategoryId = categories[i].id;
+            break;
+        }
+    }
 
     sleep(1);
 
 
     // Get a category by id
-    res = http.get(`${baseUrl}/${randomCategoryId}`);
+    res = http.get(`${baseUrl}/${myCategoryId}`);
     if (res.status !== 200) {
         fail(`Category retrieval failed with status code: ${res.status}`);
     }
@@ -81,7 +86,7 @@ export default function () {
     payload = JSON.stringify({
         name: "k6-" + Date.now()
     });
-    res = http.put(`${baseUrl}/${randomCategoryId}`, payload, params);
+    res = http.put(`${baseUrl}/${myCategoryId}`, payload, params);
     if (res.status !== 200) {
         fail(`Category update failed with status code: ${res.status}`);
     }
@@ -90,7 +95,7 @@ export default function () {
 
 
     // Delete a category
-    res = http.del(`${baseUrl}/${randomCategoryId}`, null, params);
+    res = http.del(`${baseUrl}/${myCategoryId}`, null, params);
     if (res.status !== 202) {
         fail(`Category deletion failed with status code: ${res.status}`);
     }
