@@ -1,5 +1,6 @@
 import http from 'k6/http';
 import { sleep, fail } from 'k6';
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export let options = {
     insecureSkipTLSVerify: true,
@@ -94,4 +95,11 @@ export default function () {
         fail(`Category deletion failed with status code: ${res.status}`);
     }
 
+}
+
+
+export function handleSummary(data) {
+    return {
+        "../category_test_summary.html": htmlReport(data, { title: "Categories API" })
+    };
 }
