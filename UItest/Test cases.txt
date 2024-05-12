@@ -6,7 +6,7 @@ Tesztesetek folyamata:
 
 3. Termékek kosárba: (2) -> Termékek -> Sajt Add to cart -> Élelmiszer; elvárt kimenet: csak élelmiszerek felsorolva -> Sajt Add to cart -> Elektronika -> Ár 79000 max; elvárt kimenet: nincs nagyobb érték felsorolva -> Alaplap Add to cart -> Sport -> Ár 4000 és 95000 közt; elvárt kimenet: csak eközötti értékek felsorolva -> Roller Add to cart -> Kosár; elvárt kimenet: 2 sajt, 1 alaplap, 1 roller -> Alaplap remove; elvárt kimenet: 2 sajt, 1 roller
 
-4. Megrendelés: (3) -> Megrendel; elvárt kimenet: Alaplap és roller felsorolva a termékeknél, Status: Unread -> Kosár; elvárt kimenet: üres kosár -> Megrendelések -> Számla; elvárt kimenet: pdf megnyitva
+4. Megrendelés: (3) -> Megrendel; elvárt kimenet: Sajt és roller felsorolva a termékeknél, Status: Unread -> Kosár; elvárt kimenet: üres kosár -> Megrendelések -> Számla; elvárt kimenet: pdf megnyitva
 
 5. Admin bejelentkezés: Bejelentkezés -> E-mail: admin@admin.com, Jelszó: ADMIN_admin; elvárt kimenet: bejelentkezett felület admin néven
 

@@ -62,5 +62,5 @@ def test_registration(driver):
     user_name = driver.find_element(By.CLASS_NAME, "MuiTypography-root")
     assert "UjFelhasznalo" in user_name.text
 
-    if __name__ == "__main__":
-        test_registration()
+if __name__ == "__main__":
+    test_registration(webdriver.Chrome)

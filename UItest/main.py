@@ -5,6 +5,8 @@ from selenium import webdriver
 import signal
 import registration
 import userlogin
+import ProductsToCart
+import order
 from selenium.webdriver.chrome.options import Options
 
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,11 +61,17 @@ def run_tests():
     driver = create_driver()
     driver.get("http://localhost:3000")
     try:
-        registration.test_registration(driver)
-        reset_database()
-        driver = create_driver()
-        driver.get("http://localhost:3000")
-        userlogin.test_userlogin(driver)
+        #registration.test_registration(driver)
+        #reset_database()
+        #driver = create_driver()
+        #driver.get("http://localhost:3000")
+        #userlogin.test_userlogin(driver)
+        #reset_database()
+        #driver = create_driver()
+        #driver.get("http://localhost:3000")
+        #ProductsToCart.test_cart(driver)
+        #reset_database()
+        order.test_order(driver)
         reset_database()
     finally:
         driver.quit()
