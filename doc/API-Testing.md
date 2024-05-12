@@ -36,15 +36,29 @@ Minden mappában elérhető kérést egyszerre futtathatunk, de van opció az ö
 Lehetőségünk van extra testeket is írni egy-egy kéréshez javascriptben, ahol például a várt státusz kódot ellenőrizhetjük.
 Például új kategória létrehozásánál a POST metódusnak nincs tartalma (no content), de ellenőrzhetjük hogy tényleg 204-es kóddal tér e vissza.
 
-> A Category végpontok sikeres tesztelése:
-![](resources/API-Testing/testing2.png)
 
-Az összes kérés egyidejű tesztelésére nem volt lehetőség, mivel a Postman ingyenes verzióban limitálja az egységidő alatt egyszerre elvégezhető kérések számát, viszont egyenként tesztelve mindegyik végpont az elvártnak megfelelően működik.
+
+> A Category végpontok sikeres tesztelése:
+![](resources/API-Testing/category-testing.png)
+
+> Az Order végpontok sikeres tesztelése:
+![](resources/API-Testing/order-testing.png)
+
+> A Product végpontok sikeres tesztelése:
+![](resources/API-Testing/product-testing.png)
+
+Lehetőségünk van egyes lekérdezésekhez a paraméterek beállitására, amit például a Product szürűs GET lekérdezéséhez használtam, ami visszaadja a szürű feltételeknek megfelelő terméket.
+
+![](resources/API-Testing/product-filter-params.png)
+
+> A User végpontok sikeres tesztelése:
+![](resources/API-Testing/user-testing.png)
+
 
 ## Összegzés
 
 Ha egy éles projekten, szeretnénk karbantartani a végpontjainkat ez a módszer jónak bizonyul, főleg, hogy időzíteni is lehet a tesztelést.
 
-Jelen projektben segített megbizonyosodni az API konzisztens és helyes viselkedéséről.
+Jelen projektben segített megbizonyosodni az API konzisztens és helyes viselkedéséről, nem véltem felfedezni problémát.
 
 
