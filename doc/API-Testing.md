@@ -47,7 +47,7 @@ Például új kategória létrehozásánál a POST metódusnak nincs tartalma (n
 > A Product végpontok sikeres tesztelése:
 ![](resources/API-Testing/product-testing.png)
 
-Lehetőségünk van egyes lekérdezésekhez a paraméterek beállitására, amit például a Product szűrős GET lekérdezéséhez használtam, ami visszaadja a szűrő feltételeknek megfelelő terméket.
+Lehetőségünk van egyes lekérdezésekhez a paraméterek beállítására, amit például a Product szűrős GET lekérdezéséhez használtam, ami visszaadja a szűrő feltételeknek megfelelő terméket.
 
 ![](resources/API-Testing/product-filter-params.png)
 
