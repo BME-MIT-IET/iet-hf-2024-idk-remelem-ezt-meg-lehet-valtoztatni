@@ -16,7 +16,7 @@ A fájl tartalmazza az egyes API végpontokat, paramétereit, lehetséges válas
 >Egy részlet a fájlból:
 ![swagger.json](resources/API-Testing/swagger.json.png)
 
-A teljes forrásfájl elérhető a docs/resources/API-testing mappában, vagy könnyedén letölthető a szerver futtatása után a *http://localhost:5100/swagger/v1/swagger.json* címről.
+A teljes forrásfájl elérhető a docs/resources/API-testing mappában - [swagger.json](resources/API-Testing/swagger.json), vagy könnyedén letölthető a szerver futtatása után a *http://localhost:5100/swagger/v1/swagger.json* címről.
 
 ## Importálás Postmanbe
 
@@ -47,7 +47,7 @@ Például új kategória létrehozásánál a POST metódusnak nincs tartalma (n
 > A Product végpontok sikeres tesztelése:
 ![](resources/API-Testing/product-testing.png)
 
-Lehetőségünk van egyes lekérdezésekhez a paraméterek beállitására, amit például a Product szürűs GET lekérdezéséhez használtam, ami visszaadja a szürű feltételeknek megfelelő terméket.
+Lehetőségünk van egyes lekérdezésekhez a paraméterek beállitására, amit például a Product szűrős GET lekérdezéséhez használtam, ami visszaadja a szűrő feltételeknek megfelelő terméket.
 
 ![](resources/API-Testing/product-filter-params.png)
 
