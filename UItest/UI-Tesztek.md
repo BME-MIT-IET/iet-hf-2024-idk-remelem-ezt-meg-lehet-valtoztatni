@@ -1,3 +1,0 @@
-# UI Tesztek Selenium-mal
-
-## 

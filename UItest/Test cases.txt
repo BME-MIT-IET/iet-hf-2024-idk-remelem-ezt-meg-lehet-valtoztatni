@@ -10,4 +10,4 @@ Tesztesetek folyamata:
 
 5. Admin bejelentkezés: Bejelentkezés -> E-mail: admin@admin.com, Jelszó: ADMIN_admin; elvárt kimenet: bejelentkezett felület admin néven
 
-6. Megrendelés státusz: (4) -> Webshopra vissza -> Kijelentkezés -> (5) -> Megrendelések -> Számla Processing; elvárt kimenet: Status: Processing -> Kijelentkezés -> (2) -> Megrendelések; elvárt kimenet: Status: Processing
+6. Megrendelés státusz: (4) -> Kijelentkezés -> (5) -> Megrendelések -> Számla Processing; elvárt kimenet: Status: Processing -> Kijelentkezés -> (2) -> Megrendelések; elvárt kimenet: Status: Processing

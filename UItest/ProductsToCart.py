@@ -5,6 +5,7 @@ import userlogin
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
+#Used to check if given items are visible after the price interval has changed
 def check_item_visibility(driver, item_text, expected_visibility=True):
     try:
         item = driver.find_element(By.XPATH, f"//*[contains(text(), '{item_text}')]")
@@ -15,6 +16,7 @@ def check_item_visibility(driver, item_text, expected_visibility=True):
             raise AssertionError(f"Item '{item_text}' should be visible.")
 
 
+#Drags the price interval slider to the wanted value. slider_index tells if we want to move the lower or the higher handler of the slider
 def drag_slider_to_value(driver, slider_value, slider_index):
     try:
         # Find the slider handle for the specified index
@@ -47,6 +49,7 @@ def drag_slider_to_value(driver, slider_value, slider_index):
         print(f"Failed to drag the slider to set the value: {str(e)}")
 
 
+#Checks the items and their quantities in a table. expected_items is a set containing the expected results
 def check_items_and_quantities(driver, expected_items):
 
     # Find all rows in the table
@@ -73,57 +76,68 @@ def check_items_and_quantities(driver, expected_items):
             print(f"Item {item} with quantity {quantity} is missing or incorrect.")
 
 def test_cart(driver):
+    #Log in with user account
     userlogin.test_userlogin(driver)
     time.sleep(2)
 
+    # Find and click the Products button
     products_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Termékek')]")
     products_button.click()
     time.sleep(2)
 
+    # Find and click the Add button of the Cheese product
     add_cheese_button = driver.find_element(By.XPATH, "//td[text()='Sajt']/following-sibling::td/button")
     add_cheese_button.click()
     time.sleep(2)
 
+    # Find and click the Food button
     food_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Élelmiszer')]")
     food_button.click()
     time.sleep(2)
     check_item_visibility(driver, "Sajt", expected_visibility=True)  # Expect Sajt to be visible
     check_item_visibility(driver, "Alaplap", expected_visibility=False)  # Expect Alaplap not to be visible
 
+    # Find and click the Add button of the Cheese product
     add_cheese_button = driver.find_element(By.XPATH, "//td[text()='Sajt']/following-sibling::td/button")
     add_cheese_button.click()
     time.sleep(2)
 
+    # Find and click the Electronics button
     electronics_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Elektronika')]")
     electronics_button.click()
     time.sleep(2)
     check_item_visibility(driver, "Sajt", expected_visibility=False)  # Expect Sajt not to be visible
     check_item_visibility(driver, "Alaplap", expected_visibility=True)  # Expect Alaplap to be visible
 
+    #Drag the slider
     drag_slider_to_value(driver, '79000', 1)
     time.sleep(2)
-
     check_item_visibility(driver, "Processzor", expected_visibility=False)
     time.sleep(2)
 
+    # Find and click the Add button of the Motherboard product
     add_motherboard_button = driver.find_element(By.XPATH, "//td[text()='Alaplap']/following-sibling::td/button")
     add_motherboard_button.click()
     time.sleep(2)
 
+    # Find and click the Sport button
     sport_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Sport')]")
     sport_button.click()
     time.sleep(2)
 
+    # Drag the slider
     drag_slider_to_value(driver, '4000',0 )
     time.sleep(2)
     drag_slider_to_value(driver, '95000', 1)
     time.sleep(2)
     check_item_visibility(driver, "UTP kábel", expected_visibility=False)
 
+    # Find and click the Add button of the Roller product
     add_roller_button = driver.find_element(By.XPATH, "//td[text()='Roller']/following-sibling::td/button")
     add_roller_button.click()
     time.sleep(2)
 
+    # Find and click the Cart button
     basket_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Kosár')]")
     basket_button.click()
     time.sleep(2)
@@ -134,9 +148,9 @@ def test_cart(driver):
     }
     check_items_and_quantities(driver, items_to_check)
 
+    # Find and click the Remove button
     remove_button = driver.find_element(By.XPATH, "//td[text()='Alaplap']/following-sibling::td/button")
     remove_button.click()
-
     items_to_check = {
         'Sajt': '2',
         'Roller': '1'

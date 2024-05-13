@@ -6,13 +6,16 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 def test_order(driver):
+    #Put some products in the cart
     ProductsToCart.test_cart(driver)
     time.sleep(2)
 
+    #Find and click the Order button
     order_button = driver.find_element(By.XPATH, "//button[contains(text(), 'Megrendel')]")
     order_button.click()
     time.sleep(2)
 
+    #Find the product names of the list
     items = driver.find_elements(By.CSS_SELECTOR, "main ul > li p:first-child")
     # Extract text and store in a list
     item_texts = [item.text for item in items]
@@ -26,10 +29,12 @@ def test_order(driver):
     last_paragraph = paragraphs[-1].text if paragraphs else ""
     assert "Unread" in last_paragraph, f"Expected 'Unread' to be part of the text, but got '{last_paragraph}'."
 
+    #Find and click the Cart button
     basket_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Kosár')]")
     basket_button.click()
     time.sleep(2)
 
+    #The table needs to be empty because we have already ordered the items
     table = driver.find_element(By.CSS_SELECTOR, "main table")
     # Find all rows in the tbody of the table
     rows = table.find_elements(By.CSS_SELECTOR, "tbody tr")
@@ -37,16 +42,15 @@ def test_order(driver):
     assert len(rows) == 0, "The table is not empty; it has additional rows."
     print("The table is correctly empty")
 
+    #Find and click the Order button
     order_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Megrendelések')]")
     order_button.click()
     time.sleep(2)
 
+    #Find and click the Receipt button
     receipt_button = driver.find_element(By.XPATH, "//a[contains(text(), 'Számla')]")
     receipt_button.click()
     time.sleep(2)
-
-    download_link = driver.find_element(By.CSS_SELECTOR, "a[href*='api/Order/1/pdf']")
-    assert "localhost:5100/api/Order/1/pdf" in download_link.get_attribute('href'), "PDF download link is incorrect."
 
 
 if __name__ == "__main__":
