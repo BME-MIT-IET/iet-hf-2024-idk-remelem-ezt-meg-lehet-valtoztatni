@@ -1,12 +1,10 @@
 import { useLocation, useRouteError } from 'react-router-dom';
 
 const getErrorDisplayMessage = errorMessage => {
-	switch (errorMessage) {
-		case "Failed to fetch":
+	if (errorMessage === "Failed to fetch") 
 			return "A szerver nem elérhető.";
-		default:
+	else
 			return "Váratlan hiba törént";
-	}
 }
 
 const Error = () => {

@@ -18,26 +18,7 @@ namespace WebShop.Api.Controllers
             _productService = productService;
         }
 
-        // GET: api/<Product>
-        /// <summary>
-        /// Visszaadja a szűrő feltételeknek megfelelő termékeket
-        /// </summary>
-        /// <param name="categoryId">A termékek kategóriája</param>
-        /// <param name="minPrice">A termékek minimum ára</param>
-        /// <param name="maxPrice">A termékek maximum ára</param>
-        /// <returns>A kritériumoknak megfelelő termékek</returns>
-        /// <response code="200">Sikeres lekérdezés</response>
-        [HttpGet]
-        [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<ProductOut>>> Get(
-            [FromQuery]int? categoryId = null,
-            [FromQuery]int? minPrice = null,
-            [FromQuery]int? maxPrice = null
-            )
-        {
-            var product = await _productService.GetProductsAsync(categoryId, minPrice, maxPrice);
-            return Ok(product);
-        }
+        
 
         /// <summary>
         /// Feltölti a json fájlban lévő termékeket
@@ -57,12 +38,12 @@ namespace WebShop.Api.Controllers
         {
             var files = HttpContext.Request.Form.Files;
             if (files.Count != 1) {
-                throw new Exception("Pontosan egy fájlt lehet csak feltölteni");
+                throw new IOException("Pontosan egy fájlt lehet csak feltölteni");
             }
-            var jsonStream = files.First().OpenReadStream();
+            var jsonStream = files[0].OpenReadStream();
             StreamReader streamReader = new StreamReader(jsonStream);
             string json = streamReader.ReadToEnd();
-            List<ProductIn> result = JsonSerializer.Deserialize<List<ProductIn>>(json);
+            List<ProductIn>? result = JsonSerializer.Deserialize<List<ProductIn>>(json);
 
             if (result == null)
             {
@@ -106,6 +87,27 @@ namespace WebShop.Api.Controllers
         public async Task<ActionResult<ProductOut>> Get(int id)
         {
             var product = await _productService.GetProductAsync(id);
+            return Ok(product);
+        }
+
+        // GET: api/<Product>
+        /// <summary>
+        /// Visszaadja a szűrő feltételeknek megfelelő termékeket
+        /// </summary>
+        /// <param name="categoryId">A termékek kategóriája</param>
+        /// <param name="minPrice">A termékek minimum ára</param>
+        /// <param name="maxPrice">A termékek maximum ára</param>
+        /// <returns>A kritériumoknak megfelelő termékek</returns>
+        /// <response code="200">Sikeres lekérdezés</response>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<IEnumerable<ProductOut>>> Get(
+            [FromQuery]int? categoryId = null,
+            [FromQuery]int? minPrice = null,
+            [FromQuery]int? maxPrice = null
+            )
+        {
+            var product = await _productService.GetProductsAsync(categoryId, minPrice, maxPrice);
             return Ok(product);
         }
 

@@ -14,7 +14,7 @@ const ProductManagement = () => {
 		if (files.length < 1) {
 			return;
 		}
-		var formdata = new FormData();
+		let formdata = new FormData();
 		formdata.append("file", files[0]);
 
 		fetch(`${baseUrl}/api/Product/json`, {
@@ -33,14 +33,12 @@ const ProductManagement = () => {
 	}
 
 	return (
-		<>
-			<Grid container spacing={2} columns={16}>
+		<Grid container spacing={2} columns={16}>
 				<Grid item xs={8}>
 					<Input onChange={setFile} type="file"></Input>
 					<Button onClick={submit}>Upload</Button>
 				</Grid>
 			</Grid>
-		</>
 	);
 }
 
