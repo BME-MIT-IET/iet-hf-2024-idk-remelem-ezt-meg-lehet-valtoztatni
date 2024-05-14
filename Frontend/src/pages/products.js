@@ -82,8 +82,7 @@ const Product = () => {
 	}, []);
 
 	return (
-		<>
-			<Grid container spacing={2} columns={16}>
+		<Grid container spacing={2} columns={16}>
 				<Grid item xs={8}>
 					<div style={{ margin: "10px 100px", textAlign: "center" }}>
 						<Typography>Filters:</Typography>
@@ -135,7 +134,6 @@ const Product = () => {
 					</table>
 				</Grid>
 			</Grid>
-		</>
 	);
 }
 

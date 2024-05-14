@@ -28,31 +28,7 @@ namespace WebShop.Api.Controllers
             _orderService = orderService;
         }
 
-        // GET api/<Order>
-        /// <summary>
-        /// Visszaadja a felhasználóhoz tartozó rendeléseket
-        /// Admin felhasználóknak minden rendelést visszaad
-        /// </summary>
-        /// <returns>A rendelések</returns>
-        /// <response code="200">Sikeres lekérdezés</response>
-        /// <response code="401">A felhasználó nincs bejelentkezve</response>
-        [HttpGet]
-        [Authorize]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(401)]
-        public async Task<ActionResult<Order>> Get()
-        {
-            if (ClaimsHelper.IsAdmin(HttpContext.User))
-            {
-                var orders = await _orderService.GetOrdersAsync();
-                return Ok(orders);
-            }
-
-            var userId = ClaimsHelper.GetUserId(HttpContext.User);
-            var order = await _orderService.GetUserOrdersAsync(userId);
-            return Ok(order);
-        }
-
+        
         private static Stream GeneratePDFReceipt(OrderOut order)
         {
             var document = new PdfDocument();
@@ -75,7 +51,7 @@ namespace WebShop.Api.Controllers
                 var product = orderItem.Product;
                 gfx.DrawString(product.Name, arial, black, box, XStringFormats.TopLeft);
                 gfx.DrawString($"(${orderItem.Quantity}db*{product.Price}$)={orderItem.Quantity * product.Price}$", arial, black, box, XStringFormats.TopRight);
-                gfx.DrawString(product?.Description ?? "", arialSmall, black, box, XStringFormats.BottomLeft);
+                gfx.DrawString(product.Description ?? "", arialSmall, black, box, XStringFormats.BottomLeft);
                 index++;
             }
             Stream pdf = new MemoryStream();
@@ -112,7 +88,32 @@ namespace WebShop.Api.Controllers
             }
             
             var pdf = GeneratePDFReceipt(order);
-            return File(pdf, "application/pdf", "Számla.pdf"); ;
+            return File(pdf, "application/pdf", "Számla.pdf");
+        }
+
+        // GET api/<Order>
+        /// <summary>
+        /// Visszaadja a felhasználóhoz tartozó rendeléseket
+        /// Admin felhasználóknak minden rendelést visszaad
+        /// </summary>
+        /// <returns>A rendelések</returns>
+        /// <response code="200">Sikeres lekérdezés</response>
+        /// <response code="401">A felhasználó nincs bejelentkezve</response>
+        [HttpGet]
+        [Authorize]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<Order>> Get()
+        {
+            if (ClaimsHelper.IsAdmin(HttpContext.User))
+            {
+                var orders = await _orderService.GetOrdersAsync();
+                return Ok(orders);
+            }
+
+            var userId = ClaimsHelper.GetUserId(HttpContext.User);
+            var order = await _orderService.GetUserOrdersAsync(userId);
+            return Ok(order);
         }
 
         // GET api/<Order>/5
