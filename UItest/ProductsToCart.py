@@ -8,7 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 #Used to check if given items are visible after the price interval has changed
 def check_item_visibility(driver, item_text, expected_visibility=True):
     try:
-        item = driver.find_element(By.XPATH, f"//*[contains(text(), '{item_text}')]")
+        driver.find_element(By.XPATH, f"//*[contains(text(), '{item_text}')]")
         if not expected_visibility:
             raise AssertionError(f"Item '{item_text}' should not be visible.")
     except NoSuchElementException:

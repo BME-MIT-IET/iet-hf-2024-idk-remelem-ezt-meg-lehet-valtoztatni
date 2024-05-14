@@ -1,0 +1,9 @@
+Szükséges installációk a program futtatásához: 
+
+dotnet ef: megtalálhatónak kell lennie az alapértelmezett mappájában: %USERPROFILE%\.dotnet\tools\dotnet-ef. Ez a tesztelt alkalmazáshoz is kell elvileg, de ha mégsem itt található, ez a scriptben a jelzett helyen cserélendő a fájl elérési útjára.
+
+npm: megtalálhatónak kell lennie a C:\Program Files\nodejs\npm.cmd alapértelmezett útvonalon. Amennyiben mégsem itt van, cserélendő a scriptben a jelzett helyen.
+
+selenium: pip install selenium segítségével telepítendő
+
+chrome/chrome webdriver: a Google Chrome letöltésével automatikusan érkezik a webdriver újabb verzióknál, régebbieknél a Chrome WebDriver kiegészítő letöltése szükséges.
