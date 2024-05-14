@@ -47,7 +47,7 @@ public class UserService : IUserService
     public async Task<UserOut> InsertUserAsync(UserIn user)
     {
         var efUser = new Dal.Entities.User(user.Name!, user.Email, user.Password);
-        _context.Users.Add(efUser);
+        await _context.Users.AddAsync(efUser);
         await _context.SaveChangesAsync();
         return await GetUserAsync(efUser.Id);
     }

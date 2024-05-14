@@ -59,7 +59,7 @@ public class OrderService : IOrderService
         efOrder.OrderDate = DateTime.Now;
         efOrder.OrderStatus = OrderStatus.Unread;
         efOrder.UserId = userId;
-        _context.Orders.Add(efOrder);
+        await _context.Orders.AddAsync(efOrder);
         await _context.SaveChangesAsync();
         return await GetOrderAsync(efOrder.Id);
     }
