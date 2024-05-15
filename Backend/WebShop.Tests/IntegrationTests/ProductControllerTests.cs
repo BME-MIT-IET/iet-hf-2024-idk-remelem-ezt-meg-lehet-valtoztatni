@@ -2,9 +2,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WebShop.Bll.Dtos;
-using WebShop.Dal.Entities;
 
-namespace WebShop.Tests;
+namespace WebShop.Tests.IntegrationTests;
 
 public partial class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
 {

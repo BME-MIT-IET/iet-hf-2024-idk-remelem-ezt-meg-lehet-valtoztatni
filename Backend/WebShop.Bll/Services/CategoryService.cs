@@ -47,7 +47,7 @@ public class CategoryService : ICategoryService
     public async Task<Category> InsertCategoryAsync(Category category)
     {
         var efCategory = new Dal.Entities.Category(category.Name);
-        _context.Categories.Add(efCategory);
+        await _context.Categories.AddAsync(efCategory);
         await _context.SaveChangesAsync();
         return await GetCategoryAsync(efCategory.Id);
     }
@@ -65,6 +65,13 @@ public class CategoryService : ICategoryService
     public async Task DeleteCategoryAsync(int id)
     {
         _context.Categories.Remove(new Dal.Entities.Category(null!) { Id = id });
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new EntityNotFoundException("Nem található a kategória");
+        }
     }
 }

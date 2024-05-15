@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using WebShop.Bll.Dtos;
 
-namespace WebShop.Tests;
+namespace WebShop.Tests.IntegrationTests;
 
 public partial class UserControllerTests : IClassFixture<CustomWebApplicationFactory>
 {

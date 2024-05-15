@@ -37,7 +37,7 @@ public class ProductService : IProductService
             ?? throw new EntityNotFoundException("Nem található a termék");
     }
 
-    public async Task<IEnumerable<ProductOut>> GetProductsAsync(int? categoryId, int? minPrice, int? maxPrice)
+    public async Task<IEnumerable<ProductOut>> GetProductsAsync(int? categoryId = null, int? minPrice = null, int? maxPrice = null)
     {
         IQueryable<Dal.Entities.Product> products = _context.Products;
 
@@ -63,7 +63,7 @@ public class ProductService : IProductService
 
     private async Task<IEnumerable<ProductOut>> GetProductsAsync(IEnumerable<int> ids)
     {
-       var products = await _context
+        var products = await _context
             .Products
             .ProjectTo<ProductOut>(_mapper.ConfigurationProvider)
             .Where(p => ids.Contains(p.Id))
@@ -73,6 +73,10 @@ public class ProductService : IProductService
 
     public async Task<ProductOut> InsertProductAsync(ProductIn newProduct)
     {
+        if (newProduct.CategoryId == null) {
+            throw new FieldIsRequiredException("A categoryId megadása kötelező");
+        }
+
         var efProduct = _mapper.Map<Dal.Entities.Product>(newProduct);
         await _context.Products.AddAsync(efProduct);
         await _context.SaveChangesAsync();
@@ -86,7 +90,7 @@ public class ProductService : IProductService
         }
 
         var efProducts = newProducts.Select(p => _mapper.Map<Dal.Entities.Product>(p)).ToList();
-        efProducts.ForEach(p => _context.Products.Add(p));
+        efProducts.ForEach(p => _context.Products.AddAsync(p));
         await _context.SaveChangesAsync();
         return await GetProductsAsync(efProducts.Select(p => p.Id));
     }

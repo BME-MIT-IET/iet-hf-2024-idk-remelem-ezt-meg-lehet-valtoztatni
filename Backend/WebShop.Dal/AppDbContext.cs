@@ -43,7 +43,7 @@ public class AppDbContext : DbContext
     }
 
     public virtual DbSet<Product> Products => Set<Product>();
-    public DbSet<Category> Categories => Set<Category>();
-    public DbSet<Order> Orders => Set<Order>();
-    public DbSet<User> Users => Set<User>();
+    public virtual DbSet<Category> Categories => Set<Category>();
+    public virtual DbSet<Order> Orders => Set<Order>();
+    public virtual DbSet<User> Users => Set<User>();
 }

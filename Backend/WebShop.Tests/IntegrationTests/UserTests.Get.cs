@@ -4,9 +4,9 @@ using System.Transactions;
 using WebShop.Bll.Dtos;
 using FluentAssertions;
 
-namespace WebShop.Tests;
+namespace WebShop.Tests.IntegrationTests;
 
-public partial class UserIntegrationTests
+public partial class UserTests
 {
     public class Get : UserControllerTests
     {
